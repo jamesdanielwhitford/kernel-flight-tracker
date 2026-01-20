@@ -43,13 +43,17 @@ jobs:
       - name: Install Kernel CLI
         run: |
           curl -fsSL https://raw.githubusercontent.com/onkernel/cli/main/install.sh | bash
+          # Find where kernel was installed
+          which kernel || find ~ -name kernel -type f 2>/dev/null | head -1
 
       - name: Deploy to Kernel
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
-          export PATH="$HOME/.kernel/bin:$PATH"
+          # Try multiple possible paths
+          export PATH="$HOME/.kernel/bin:$HOME/bin:$PATH"
+          kernel version || $HOME/.kernel/bin/kernel version || $HOME/bin/kernel version
           kernel deploy flight-search-final.ts --env-file <(echo "OPENAI_API_KEY=$OPENAI_API_KEY")
 
       - name: Run flight search
