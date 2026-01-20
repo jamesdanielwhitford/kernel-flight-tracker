@@ -1,0 +1,22 @@
+{
+  "name": "kernel-flight-search",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Multi-site autonomous flight search using Kernel + Stagehand",
+  "main": "flight-search.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@browserbasehq/stagehand": "^3.0.0",
+    "@onkernel/sdk": "latest",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.9",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,91 @@
+name: Daily Flight Price Check
+
+on:
+  schedule:
+    # Run every day at 9 AM UTC (11 AM South African Standard Time)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Allow manual triggering for testing
+    inputs:
+      origin:
+        description: 'Origin city'
+        required: false
+        default: 'Johannesburg'
+      destination:
+        description: 'Destination city'
+        required: false
+        default: 'Athens'
+      departDate:
+        description: 'Departure date'
+        required: false
+        default: 'June 15, 2026'
+      returnDate:
+        description: 'Return date'
+        required: false
+        default: 'June 29, 2026'
+
+jobs:
+  search-flights:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Kernel CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/onkernel/cli/main/install.sh | bash
+          echo "$HOME/.kernel/bin" >> $GITHUB_PATH
+
+      - name: Authenticate with Kernel
+        env:
+          KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
+        run: |
+          kernel auth login --token "$KERNEL_API_KEY"
+
+      - name: Deploy to Kernel
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          kernel deploy flight-search-final.ts --env-file <(echo "OPENAI_API_KEY=$OPENAI_API_KEY")
+
+      - name: Run flight search
+        id: search
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          ORIGIN="${{ github.event.inputs.origin || 'Johannesburg' }}"
+          DESTINATION="${{ github.event.inputs.destination || 'Athens' }}"
+          DEPART_DATE="${{ github.event.inputs.departDate || 'June 15, 2026' }}"
+          RETURN_DATE="${{ github.event.inputs.returnDate || 'June 29, 2026' }}"
+
+          echo "Searching flights from $ORIGIN to $DESTINATION..."
+
+          # Invoke the Kernel action and capture output
+          OUTPUT=$(kernel invoke flight-search-final search-flights \
+            --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}" \
+            --wait)
+
+          echo "search_results<<EOF" >> $GITHUB_OUTPUT
+          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Parse results and update README
+        run: |
+          node scripts/update-readme.js "${{ steps.search.outputs.search_results }}"
+
+      - name: Commit and push results
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "Flight Search Bot"
+          git add README.md
+          git diff --staged --quiet || git commit -m "Update flight prices for $(date +%Y-%m-%d)"
+          git push
