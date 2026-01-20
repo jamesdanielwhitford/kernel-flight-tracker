@@ -45,12 +45,17 @@ jobs:
           # Install Kernel CLI using npm
           npm install -g @onkernel/cli
 
-      - name: Deploy to Kernel
+      - name: Create .env file for deployment
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "OPENAI_API_KEY=$OPENAI_API_KEY" > .env
+
+      - name: Deploy to Kernel
+        env:
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
-          kernel deploy flight-search-final.ts --env-file <(echo "OPENAI_API_KEY=$OPENAI_API_KEY")
+          kernel deploy flight-search-final.ts --env-file .env
 
       - name: Run flight search
         id: search
