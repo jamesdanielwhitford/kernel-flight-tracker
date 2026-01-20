@@ -42,18 +42,16 @@ jobs:
 
       - name: Install Kernel CLI
         run: |
-          curl -fsSL https://raw.githubusercontent.com/onkernel/cli/main/install.sh | bash
-          # Find where kernel was installed
-          which kernel || find ~ -name kernel -type f 2>/dev/null | head -1
+          # Install Kernel CLI using npm
+          npm install -g @onkernel/cli
+          # Verify installation
+          kernel version
 
       - name: Deploy to Kernel
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
-          # Try multiple possible paths
-          export PATH="$HOME/.kernel/bin:$HOME/bin:$PATH"
-          kernel version || $HOME/.kernel/bin/kernel version || $HOME/bin/kernel version
           kernel deploy flight-search-final.ts --env-file <(echo "OPENAI_API_KEY=$OPENAI_API_KEY")
 
       - name: Run flight search
@@ -62,8 +60,6 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
-          export PATH="$HOME/.kernel/bin:$PATH"
-
           ORIGIN="${{ github.event.inputs.origin || 'Johannesburg' }}"
           DESTINATION="${{ github.event.inputs.destination || 'Athens' }}"
           DEPART_DATE="${{ github.event.inputs.departDate || 'June 15, 2026' }}"
@@ -71,12 +67,16 @@ jobs:
 
           echo "Searching flights from $ORIGIN to $DESTINATION..."
 
-          # Invoke the Kernel action and capture output (without --wait flag)
-          OUTPUT=$(kernel invoke flight-search-final search-flights \
-            --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}")
+          # Invoke the Kernel action and capture JSON output
+          kernel invoke flight-search-final search-flights \
+            --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}" \
+            --output json > output.jsonl
+
+          # Extract the final result JSON (last line with success/data)
+          RESULT=$(tail -1 output.jsonl | jq -c 'select(.data != null)')
 
           echo "search_results<<EOF" >> $GITHUB_OUTPUT
-          echo "$OUTPUT" >> $GITHUB_OUTPUT
+          echo "$RESULT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Parse results and update README
