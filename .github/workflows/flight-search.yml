@@ -45,11 +45,11 @@ jobs:
           curl -fsSL https://raw.githubusercontent.com/onkernel/cli/main/install.sh | bash
           echo "$HOME/.kernel/bin" >> $GITHUB_PATH
 
-      - name: Authenticate with Kernel
+      - name: Set Kernel API Key
         env:
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
-          kernel auth login --token "$KERNEL_API_KEY"
+          echo "KERNEL_API_KEY is set for deployment and invocation"
 
       - name: Deploy to Kernel
         env:
