@@ -65,17 +65,31 @@ jobs:
 
           echo "Searching flights from $ORIGIN to $DESTINATION..."
 
-          # Invoke the Kernel action and capture JSON output
+          # Test authentication first
+          echo "Testing Kernel auth..."
+          kernel auth status || echo "Auth check completed"
+
+          # Invoke the Kernel action and capture JSON output (or error)
+          set +e  # Don't exit on error
           kernel invoke flight-search-final search-flights \
             --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}" \
-            --output json > output.jsonl
+            --output json > output.jsonl 2>&1
+          INVOKE_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          echo "Invoke exit code: $INVOKE_EXIT_CODE"
+          echo "Output file contents:"
+          cat output.jsonl || echo "No output file"
 
           # Extract the final result JSON (last line with success/data)
-          RESULT=$(tail -1 output.jsonl | jq -c 'select(.data != null)')
+          RESULT=$(tail -1 output.jsonl | jq -c 'select(.data != null)' || echo '{"error": "No data found"}')
 
           echo "search_results<<EOF" >> $GITHUB_OUTPUT
           echo "$RESULT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+          # Exit with the original invoke exit code
+          exit $INVOKE_EXIT_CODE
 
       - name: Parse results and update README
         run: |
