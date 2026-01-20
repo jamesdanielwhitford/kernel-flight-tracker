@@ -43,25 +43,23 @@ jobs:
       - name: Install Kernel CLI
         run: |
           curl -fsSL https://raw.githubusercontent.com/onkernel/cli/main/install.sh | bash
-          echo "$HOME/.kernel/bin" >> $GITHUB_PATH
-
-      - name: Set Kernel API Key
-        env:
-          KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
-        run: |
-          echo "KERNEL_API_KEY is set for deployment and invocation"
 
       - name: Deploy to Kernel
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
+          export PATH="$HOME/.kernel/bin:$PATH"
           kernel deploy flight-search-final.ts --env-file <(echo "OPENAI_API_KEY=$OPENAI_API_KEY")
 
       - name: Run flight search
         id: search
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
+          export PATH="$HOME/.kernel/bin:$PATH"
+
           ORIGIN="${{ github.event.inputs.origin || 'Johannesburg' }}"
           DESTINATION="${{ github.event.inputs.destination || 'Athens' }}"
           DEPART_DATE="${{ github.event.inputs.departDate || 'June 15, 2026' }}"
@@ -69,10 +67,9 @@ jobs:
 
           echo "Searching flights from $ORIGIN to $DESTINATION..."
 
-          # Invoke the Kernel action and capture output
+          # Invoke the Kernel action and capture output (without --wait flag)
           OUTPUT=$(kernel invoke flight-search-final search-flights \
-            --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}" \
-            --wait)
+            --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}")
 
           echo "search_results<<EOF" >> $GITHUB_OUTPUT
           echo "$OUTPUT" >> $GITHUB_OUTPUT
