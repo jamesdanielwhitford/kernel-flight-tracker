@@ -44,8 +44,6 @@ jobs:
         run: |
           # Install Kernel CLI using npm
           npm install -g @onkernel/cli
-          # Verify installation
-          kernel version
 
       - name: Deploy to Kernel
         env:
