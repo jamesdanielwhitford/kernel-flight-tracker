@@ -5,21 +5,35 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 ## Latest Flight Search Results
 
 **Last Updated:** January 21, 2026
-**Status:** ❌ Failed
+**Status:** ✅ Successful
 
 **Route:** Johannesburg → Athens
 **Dates:** June 15, 2026 to June 29, 2026
 
 
-### ⚠️ Agent Error
+### 🎯 Cheapest Flight Found
 
-The AI agent encountered issues during the flight search:
 
-```
-Failed to execute task: {"error":{"code":429,"message":"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: computer-use-preview\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: computer-use-preview\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: computer-use-preview\nPlease retry in 16.530305391s.","status":"RESOURCE_EXHAUSTED","details":[{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"computer-use-preview"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"model":"computer-use-preview","location":"global"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"computer-use-preview"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"16s"}]}}
-```
+| Airline | Price | Duration |
+|---------|-------|----------|
+| **Ethiopian Airlines** | **$552** | **14 hr 45 min** |
 
-**Note:** The automated search will try again on the next scheduled run.
+
+### ✈️ All Flight Options
+
+
+| # | Airline | Price | Duration |
+|---|---------|-------|----------|
+| 1 | Ethiopian Airlines | $552 | 14 hr 45 min |
+| 2 | Turkish Airlines | $632 | 13 hr 55 min |
+| 3 | Emirates | $669 | 15 hr 40 min |
+| 4 | Qatar Airways | $702 | 14 hr 30 min |
+| 5 | Qatar Airways | $567 | 20 hr 35 min |
+| 6 | Ethiopian Air & Turkish Airlines | $653 | 17 hr 25 min |
+| 7 | EgyptAir, Aegean, & South African Airlines | $686 | 13 hr 25 min |
+
+**Total options found:** 7
+
 
 
 ---
@@ -119,4 +133,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-01-21T12:43:47.698Z*
+*Last automated update: 2026-01-21T12:51:40.818Z*
