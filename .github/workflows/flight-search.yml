@@ -50,9 +50,9 @@ jobs:
 
       - name: Create .env file for deployment
         env:
-          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          echo "GOOGLE_GENERATIVE_AI_API_KEY=$GOOGLE_GENERATIVE_AI_API_KEY" > .env
+          echo "OPENAI_API_KEY=$OPENAI_API_KEY" > .env
 
       - name: Deploy to Kernel
         env:
@@ -63,7 +63,7 @@ jobs:
       - name: Run flight search
         id: search
         env:
-          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
           ORIGIN="${{ github.event.inputs.origin || 'Johannesburg' }}"
