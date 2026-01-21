@@ -67,7 +67,7 @@ app.action('search-flights', async (ctx: KernelContext, payload: FlightSearchPay
     // 4. Use CUA agent with explicit step-by-step instructions (pattern from Experiment 3e)
     const agent = stagehand.agent({
       mode: 'cua',
-      model: "google/gemini-2.0-flash-exp",
+      model: "google/gemini-2.5-computer-use-preview-10-2025",
       systemPrompt: `You are a helpful travel assistant that finds cheap flights.
 
 CRITICAL INSTRUCTIONS:
