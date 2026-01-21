@@ -1,10 +1,7 @@
-name: Daily Flight Price Check
+name: Test Optimized Flight Search
 
 on:
-  schedule:
-    # Run every day at 9 AM UTC (11 AM South African Standard Time)
-    - cron: '0 9 * * *'
-  workflow_dispatch: # Allow manual triggering for testing
+  workflow_dispatch: # Manual trigger only for testing
     inputs:
       origin:
         description: 'Origin city'
@@ -27,7 +24,7 @@ permissions:
   contents: write  # Allow pushing commits
 
 jobs:
-  search-flights:
+  test-optimized:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,23 +41,18 @@ jobs:
         run: npm ci
 
       - name: Install Kernel CLI
-        run: |
-          # Install Kernel CLI using npm
-          npm install -g @onkernel/cli
+        run: npm install -g @onkernel/cli
 
-      - name: Create .env file for deployment
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          echo "OPENAI_API_KEY=$OPENAI_API_KEY" > .env
-
-      - name: Deploy to Kernel
+      - name: Deploy optimized version to Kernel
         env:
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          kernel deploy flight-search-final.ts --env-file .env
+          # Deploy with environment variables
+          kernel deploy flight-search-optimized.ts \
+            --env OPENAI_API_KEY="$OPENAI_API_KEY"
 
-      - name: Run flight search
+      - name: Run optimized flight search
         id: search
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -71,32 +63,34 @@ jobs:
           DEPART_DATE="${{ github.event.inputs.departDate || 'June 15, 2026' }}"
           RETURN_DATE="${{ github.event.inputs.returnDate || 'June 29, 2026' }}"
 
-          echo "Searching flights from $ORIGIN to $DESTINATION..."
+          echo "🚀 Testing optimized search: $ORIGIN → $DESTINATION"
+          echo "📅 Dates: $DEPART_DATE to $RETURN_DATE"
 
-          # Test authentication first
-          echo "Testing Kernel auth..."
-          kernel auth status || echo "Auth check completed"
-
-          # Invoke the Kernel action and capture JSON output (or error)
+          # Invoke the optimized Kernel action
           set +e  # Don't exit on error
-          kernel invoke flight-search-final search-flights \
+          kernel invoke flight-search-optimized search-flights \
             --payload "{\"origin\": \"$ORIGIN\", \"destination\": \"$DESTINATION\", \"departDate\": \"$DEPART_DATE\", \"returnDate\": \"$RETURN_DATE\"}" \
             --output json > output.jsonl 2>&1
           INVOKE_EXIT_CODE=$?
           set -e  # Re-enable exit on error
 
-          echo "Invoke exit code: $INVOKE_EXIT_CODE"
-          echo "Output file contents:"
+          echo "Exit code: $INVOKE_EXIT_CODE"
+          echo "Output:"
           cat output.jsonl || echo "No output file"
 
-          # Extract the final invocation_state event and parse the output field
+          # Extract the final invocation_state event
           FINAL_EVENT=$(grep '"event":"invocation_state"' output.jsonl | grep '"status":"succeeded"' | tail -1)
 
           if [ -z "$FINAL_EVENT" ]; then
-            echo "Error: No successful invocation found"
-            RESULT='{"error": "No successful invocation found"}'
+            echo "⚠️ No successful invocation found"
+            # Try to find error information
+            ERROR_EVENT=$(grep '"event":"invocation_state"' output.jsonl | grep '"status":"failed"' | tail -1)
+            if [ -n "$ERROR_EVENT" ]; then
+              RESULT=$(echo "$ERROR_EVENT" | jq -r '.invocation.output // "{\"error\": \"Failed invocation\"}"')
+            else
+              RESULT='{"error": "No invocation found"}'
+            fi
           else
-            # Extract the .invocation.output field (which is a JSON string) and parse it
             RESULT=$(echo "$FINAL_EVENT" | jq -r '.invocation.output // "{\"error\": \"No output field\"}"')
           fi
 
@@ -104,21 +98,28 @@ jobs:
           echo "$RESULT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          # Store the exit code for reference but don't fail
           echo "invoke_exit_code=$INVOKE_EXIT_CODE" >> $GITHUB_OUTPUT
 
-      - name: Parse results and update README
-        if: always()  # Always run this step, even if previous step had issues
+      - name: Display results
+        if: always()
         run: |
-          # Write search results to a temp file to avoid shell escaping issues
-          echo '${{ steps.search.outputs.search_results }}' > /tmp/search-results.json
-          node scripts/update-readme.js "$(cat /tmp/search-results.json)" "${{ steps.search.outputs.invoke_exit_code }}"
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```json' >> $GITHUB_STEP_SUMMARY
+          echo '${{ steps.search.outputs.search_results }}' | jq '.' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
-      - name: Commit and push results
-        if: always()  # Always commit results, whether successful or not
+      - name: Create test report
+        if: always()
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "Flight Search Bot"
-          git add README.md
-          git diff --staged --quiet || git commit -m "Update flight prices for $(date +%Y-%m-%d)"
-          git push
+          mkdir -p test-results
+          cat > test-results/optimized-test-$(date +%Y%m%d-%H%M%S).json << 'EOF'
+          ${{ steps.search.outputs.search_results }}
+          EOF
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: test-results/
