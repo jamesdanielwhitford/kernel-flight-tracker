@@ -8,8 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
 
-// Get search results from command line
+// Get search results and exit code from command line
 const searchResultsRaw = process.argv[2];
+const exitCode = process.argv[3] || '0';
 
 if (!searchResultsRaw) {
   console.error('Error: No search results provided');
@@ -25,8 +26,13 @@ try {
   process.exit(1);
 }
 
-// Extract flight data from agent message
+// Determine if the agent actually succeeded in finding flights
 const agentMessage = searchResults.data?.agentMessage || '';
+const agentSucceeded = !agentMessage.includes('unable to recover') &&
+                       !agentMessage.includes('browser issues') &&
+                       agentMessage.includes('CHEAPEST FLIGHT');
+
+// Extract flight data from agent message
 const timestamp = new Date().toISOString();
 const dateStr = new Date().toLocaleDateString('en-US', {
   year: 'numeric',
@@ -60,6 +66,9 @@ const allFlights = flightLines.map(line => {
 }).filter(Boolean);
 
 // Generate README content
+const statusEmoji = agentSucceeded ? '✅' : '❌';
+const statusText = agentSucceeded ? 'Successful' : 'Failed';
+
 const readmeContent = `# Autonomous AI Flight Tracker
 
 This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search for flights and track prices over time.
@@ -67,10 +76,12 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 ## Latest Flight Search Results
 
 **Last Updated:** ${dateStr}
+**Status:** ${statusEmoji} ${statusText}
 
 **Route:** ${searchResults.data?.searchParams?.origin || 'Johannesburg'} → ${searchResults.data?.searchParams?.destination || 'Athens'}
 **Dates:** ${searchResults.data?.searchParams?.departDate || 'June 15, 2026'} to ${searchResults.data?.searchParams?.returnDate || 'June 29, 2026'}
 
+${agentSucceeded ? `
 ### 🎯 Cheapest Flight Found
 
 ${cheapestFlight ? `
@@ -88,6 +99,17 @@ ${allFlights.map((flight, idx) => `| ${idx + 1} | ${flight.airline} | ${flight.p
 
 **Total options found:** ${allFlights.length}
 ` : '*No flight options extracted*'}
+` : `
+### ⚠️ Agent Error
+
+The AI agent encountered issues during the flight search:
+
+\`\`\`
+${agentMessage}
+\`\`\`
+
+**Note:** The automated search will try again on the next scheduled run.
+`}
 
 ---
 
@@ -194,7 +216,13 @@ const readmePath = join(projectRoot, 'README.md');
 writeFileSync(readmePath, readmeContent);
 
 console.log('✅ README updated successfully');
-console.log(`📊 Found ${allFlights.length} flight options`);
-if (cheapestFlight) {
-  console.log(`💰 Cheapest: ${cheapestFlight.airline} - ${cheapestFlight.price} - ${cheapestFlight.duration}`);
+console.log(`📊 Agent status: ${statusEmoji} ${statusText}`);
+
+if (agentSucceeded) {
+  console.log(`📊 Found ${allFlights.length} flight options`);
+  if (cheapestFlight) {
+    console.log(`💰 Cheapest: ${cheapestFlight.airline} - ${cheapestFlight.price} - ${cheapestFlight.duration}`);
+  }
+} else {
+  console.log(`⚠️ Agent failed: ${agentMessage.substring(0, 100)}...`);
 }

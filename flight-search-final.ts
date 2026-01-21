@@ -49,8 +49,8 @@ app.action('search-flights', async (ctx: KernelContext, payload: FlightSearchPay
       localBrowserLaunchOptions: {
         cdpUrl: kernelBrowser.cdp_ws_url,
       },
-      modelName: "openai/gpt-4o",
-      apiKey: process.env.OPENAI_API_KEY,
+      modelName: "google/gemini-2.0-flash-exp",
+      apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
       verbose: 1,
       domSettleTimeout: 30_000,
     });
@@ -67,7 +67,7 @@ app.action('search-flights', async (ctx: KernelContext, payload: FlightSearchPay
     // 4. Use CUA agent with explicit step-by-step instructions (pattern from Experiment 3e)
     const agent = stagehand.agent({
       mode: 'cua',
-      model: "openai/computer-use-preview",
+      model: "google/gemini-2.0-flash-exp",
       systemPrompt: `You are a helpful travel assistant that finds cheap flights.
 
 CRITICAL INSTRUCTIONS:

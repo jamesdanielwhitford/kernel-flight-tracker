@@ -50,9 +50,9 @@ jobs:
 
       - name: Create .env file for deployment
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
         run: |
-          echo "OPENAI_API_KEY=$OPENAI_API_KEY" > .env
+          echo "GOOGLE_GENERATIVE_AI_API_KEY=$GOOGLE_GENERATIVE_AI_API_KEY" > .env
 
       - name: Deploy to Kernel
         env:
@@ -63,7 +63,7 @@ jobs:
       - name: Run flight search
         id: search
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
           KERNEL_API_KEY: ${{ secrets.KERNEL_API_KEY }}
         run: |
           ORIGIN="${{ github.event.inputs.origin || 'Johannesburg' }}"
@@ -104,16 +104,18 @@ jobs:
           echo "$RESULT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-          # Exit with the original invoke exit code
-          exit $INVOKE_EXIT_CODE
+          # Store the exit code for reference but don't fail
+          echo "invoke_exit_code=$INVOKE_EXIT_CODE" >> $GITHUB_OUTPUT
 
       - name: Parse results and update README
+        if: always()  # Always run this step, even if previous step had issues
         run: |
           # Write search results to a temp file to avoid shell escaping issues
           echo '${{ steps.search.outputs.search_results }}' > /tmp/search-results.json
-          node scripts/update-readme.js "$(cat /tmp/search-results.json)"
+          node scripts/update-readme.js "$(cat /tmp/search-results.json)" "${{ steps.search.outputs.invoke_exit_code }}"
 
       - name: Commit and push results
+        if: always()  # Always commit results, whether successful or not
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "Flight Search Bot"
