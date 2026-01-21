@@ -86,8 +86,16 @@ jobs:
           echo "Output file contents:"
           cat output.jsonl || echo "No output file"
 
-          # Extract the final result JSON (last line with success/data)
-          RESULT=$(tail -1 output.jsonl | jq -c 'select(.data != null)' || echo '{"error": "No data found"}')
+          # Extract the final invocation_state event and parse the output field
+          FINAL_EVENT=$(grep '"event":"invocation_state"' output.jsonl | grep '"status":"succeeded"' | tail -1)
+
+          if [ -z "$FINAL_EVENT" ]; then
+            echo "Error: No successful invocation found"
+            RESULT='{"error": "No successful invocation found"}'
+          else
+            # Extract the .invocation.output field (which is a JSON string) and parse it
+            RESULT=$(echo "$FINAL_EVENT" | jq -r '.invocation.output // "{\"error\": \"No output field\"}"')
+          fi
 
           echo "search_results<<EOF" >> $GITHUB_OUTPUT
           echo "$RESULT" >> $GITHUB_OUTPUT
