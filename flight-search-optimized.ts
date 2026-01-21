@@ -79,49 +79,49 @@ app.action('search-flights', async (ctx: KernelContext, payload: FlightSearchPay
       console.log('✅ Stagehand initialized');
 
       // 3. Navigate to Google Flights
-      const page = stagehand.context.pages()[0];
+      const page = stagehand.page;
       await page.goto('https://www.google.com/travel/flights', { waitUntil: 'networkidle' });
       console.log('✅ Navigated to Google Flights');
 
       // Wait for page to stabilize
-      await page.waitForTimeout(2000);
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // 4. Use act() primitive for form filling (cheaper + faster than agent)
       console.log('📝 Filling in origin...');
       await stagehand.act({
         action: `Click on the "Where from?" field and type "${payload.origin}"`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('📝 Selecting origin from dropdown...');
       await stagehand.act({
         action: `Click on the first matching airport suggestion for ${payload.origin}`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('📝 Filling in destination...');
       await stagehand.act({
         action: `Click on the "Where to?" field and type "${payload.destination}"`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('📝 Selecting destination from dropdown...');
       await stagehand.act({
         action: `Click on the first matching airport suggestion for ${payload.destination}`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('📅 Setting departure date...');
       await stagehand.act({
         action: `Set the departure date to ${payload.departDate}`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('📅 Setting return date...');
       await stagehand.act({
         action: `Set the return date to ${payload.returnDate}`
       });
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       console.log('🔍 Clicking search button...');
       await stagehand.act({
@@ -136,7 +136,7 @@ app.action('search-flights', async (ctx: KernelContext, payload: FlightSearchPay
       });
 
       // Wait additional time for all results to render
-      await page.waitForTimeout(5000);
+      await new Promise(resolve => setTimeout(resolve, 5000));
       console.log('✅ Flight results loaded');
 
       // 6. Use extract() with Zod schema for structured data extraction
