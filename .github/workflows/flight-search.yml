@@ -23,6 +23,9 @@ on:
         required: false
         default: 'June 29, 2026'
 
+permissions:
+  contents: write  # Allow pushing commits
+
 jobs:
   search-flights:
     runs-on: ubuntu-latest
