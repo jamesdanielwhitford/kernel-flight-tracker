@@ -106,7 +106,9 @@ jobs:
 
       - name: Parse results and update README
         run: |
-          node scripts/update-readme.js "${{ steps.search.outputs.search_results }}"
+          # Write search results to a temp file to avoid shell escaping issues
+          echo '${{ steps.search.outputs.search_results }}' > /tmp/search-results.json
+          node scripts/update-readme.js "$(cat /tmp/search-results.json)"
 
       - name: Commit and push results
         run: |
