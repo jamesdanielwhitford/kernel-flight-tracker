@@ -5,35 +5,21 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 ## Latest Flight Search Results
 
 **Last Updated:** January 21, 2026
-**Status:** ✅ Successful
+**Status:** ❌ Failed
 
 **Route:** Johannesburg → Athens
 **Dates:** June 15, 2026 to June 29, 2026
 
 
-### 🎯 Cheapest Flight Found
+### ⚠️ Agent Error
 
+The AI agent encountered issues during the flight search:
 
-| Airline | Price | Duration |
-|---------|-------|----------|
-| **Ethiopian Airlines** | **$552** | **14 hr 45 min** |
+```
 
+```
 
-### ✈️ All Flight Options
-
-
-| # | Airline | Price | Duration |
-|---|---------|-------|----------|
-| 1 | Ethiopian Airlines | $552 | 14 hr 45 min |
-| 2 | Turkish Airlines | $632 | 13 hr 55 min |
-| 3 | Emirates | $669 | 15 hr 40 min |
-| 4 | Qatar Airways | $702 | 14 hr 30 min |
-| 5 | Qatar Airways | $567 | 20 hr 35 min |
-| 6 | Ethiopian Air & Turkish Airlines | $653 | 17 hr 25 min |
-| 7 | EgyptAir, Aegean, & South African Airlines | $686 | 13 hr 25 min |
-
-**Total options found:** 7
-
+**Note:** The automated search will try again on the next scheduled run.
 
 
 ---
@@ -133,4 +119,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-01-21T12:51:40.818Z*
+*Last automated update: 2026-01-21T15:25:34.690Z*
