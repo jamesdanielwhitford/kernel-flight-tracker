@@ -4,33 +4,22 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 ## Latest Flight Search Results
 
-**Last Updated:** January 24, 2026
-**Status:** ✅ Successful
+**Last Updated:** January 25, 2026
+**Status:** ❌ Failed
 
 **Route:** Johannesburg → Athens
 **Dates:** June 15, 2026 to June 29, 2026
 
 
-### 🎯 Cheapest Flight Found
+### ⚠️ Agent Error
 
+The AI agent encountered issues during the flight search:
 
-| Airline | Price | Duration |
-|---------|-------|----------|
-| **Ethiopian Airlines** | **$550** | **14 hrs 45 mins** |
+```
+Failed to execute task: Invalid response body while trying to fetch https://api.openai.com/v1/responses: Premature close
+```
 
-
-### ✈️ All Flight Options
-
-
-| # | Airline | Price | Duration |
-|---|---------|-------|----------|
-| 1 | Ethiopian Airlines | $550 | 14 hrs 45 mins |
-| 2 | Qatar Airways | $583 | 20 hrs 35 mins |
-| 3 | Turkish Airlines | $630 | 13 hrs 55 mins |
-| 4 | Emirates | $686 | 15 hrs 40 mins |
-
-**Total options found:** 4
-
+**Note:** The automated search will try again on the next scheduled run.
 
 
 ---
@@ -130,4 +119,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-01-24T09:16:35.214Z*
+*Last automated update: 2026-01-25T09:20:37.443Z*
