@@ -4,64 +4,22 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 ## Latest Flight Search Results
 
-**Last Updated:** January 26, 2026
-**Status:** ✅ Successful
+**Last Updated:** January 27, 2026
+**Status:** ❌ Failed
 
 **Route:** Johannesburg → Athens
 **Dates:** June 15, 2026 to June 29, 2026
 
 
-### 🎯 Cheapest Flight Found
+### ⚠️ Agent Error
 
+The AI agent encountered issues during the flight search:
 
-| Airline | Price | Duration |
-|---------|-------|----------|
-| **Ethiopian Airlines** | **$587** | **14h 45m** |
+```
 
+```
 
-### ✈️ All Flight Options
-
-
-| # | Airline | Price | Duration |
-|---|---------|-------|----------|
-| 1 | Ethiopian Airlines | $587 | 14h 45m |
-| 2 | Qatar Airways | $663 | 20h 35m |
-| 3 | Turkish Airlines | $675 | 13h 55m |
-| 4 | EgyptAir & Aegean, South African | $735 | 13h 25m |
-| 5 | Emirates | $785 | 15h 40m |
-| 6 | EgyptAir, Aegean | $718 | 19h 50m |
-| 7 | Emirates | $735 | 21h 5m |
-| 8 | Qatar Airways | $854 | 14h 30m |
-| 9 | Ethiopian, Aegean | $1,037 | 14h 30m |
-| 10 | Qatar Airways | $666 | 26h 45m |
-| 11 | Turkish Airlines | $675 | 19h 50m |
-| 12 | Turkish Airlines | $675 | 25h 30m |
-| 13 | Ethiopian Airlines | $678 | 29h 15m |
-| 14 | Ethiopian | $678 | 23h 5m |
-| 15 | EgyptAir, Aegean | $718 | 19h 50m |
-| 16 | Emirates | $735 | 24h 15m |
-| 17 | Emirates | $735 | 18h 50m |
-| 18 | Turkish Airlines, Aegean | $788 | 27h 20m |
-| 19 | Etihad | $849 | 19h 25m |
-| 20 | Qatar Airways | $854 | 20h 40m |
-| 21 | Qatar Airways | $854 | 14h 30m |
-| 22 | British Airways | $884 | 22h 40m |
-| 23 | British Airways | $884 | 20h 50m |
-| 24 | Ethiopian, Turkish Airlines | $906 | 17h 25m |
-| 25 | Turkish Airlines, Aegean | $910 | 17h 10m |
-| 26 | Turkish Airlines, Aegean | $910 | 22h 15m |
-| 27 | British Airways | $938 | 21h 10m |
-| 28 | British Airways | $938 | 19h 20m |
-| 29 | Qatar Airways | $1,020 | 15h 15m |
-| 30 | Ethiopian, Aegean | $1,037 | 14h 30m |
-| 31 | Ethiopian, Aegean | $1,037 | 20h 40m |
-| 32 | British Airways | $1,110 | 18h 25m |
-| 33 | KLM | $1,169 | 16h 15m |
-| 34 | SWISS, Aegean | $1,199 | 18h 30m |
-| 35 | SWISS, Aegean | $1,250 | 16h 45m |
-
-**Total options found:** 35
-
+**Note:** The automated search will try again on the next scheduled run.
 
 
 ---
@@ -161,4 +119,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-01-26T09:30:32.058Z*
+*Last automated update: 2026-01-27T09:23:37.679Z*
