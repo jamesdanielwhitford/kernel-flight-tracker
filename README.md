@@ -4,7 +4,7 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 ## Latest Flight Search Results
 
-**Last Updated:** January 27, 2026
+**Last Updated:** January 28, 2026
 **Status:** ❌ Failed
 
 **Route:** Johannesburg → Athens
@@ -119,4 +119,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-01-27T09:23:37.679Z*
+*Last automated update: 2026-01-28T09:31:00.056Z*
