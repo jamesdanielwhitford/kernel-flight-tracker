@@ -4,7 +4,7 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 ## Latest Flight Search Results
 
-**Last Updated:** February 13, 2026
+**Last Updated:** February 14, 2026
 **Status:** ✅ Successful
 
 **Route:** Johannesburg → Athens
@@ -16,7 +16,7 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 | Airline | Price | Duration |
 |---------|-------|----------|
-| **Airlink & Turkish Airlines** | **$538** | **24 hr 20 min** |
+| **Airlink, Turkish Airlines** | **$579** | **24 hr 20 min** |
 
 
 ### ✈️ All Flight Options
@@ -24,16 +24,15 @@ This project uses AI agents (Claude + Stagehand + Kernel) to autonomously search
 
 | # | Airline | Price | Duration |
 |---|---------|-------|----------|
-| 1 | Airlink & Turkish Airlines | $538 | 24 hr 20 min |
-| 2 | Ethiopian & Turkish Airlines | $621 | 17 hr 55 min |
-| 3 | Emirates | $736 | 21 hr 5 min |
-| 4 | Qatar Airways | $737 | 14 hr 30 min |
-| 5 | Emirates | $759 | 15 hr 40 min |
-| 6 | Qatar Airways | $907 | 15 hr 15 min |
-| 7 | Lufthansa & South African | $990 | 14 hr 55 min |
-| 8 | Ethiopian & Aegean | $995 | 14 hr 30 min |
+| 1 | Airlink, Turkish Airlines | $579 | 24 hr 20 min |
+| 2 | Emirates | $752 | 21 hr 5 min |
+| 3 | Qatar Airways | $761 | 14 hr 30 min |
+| 4 | British Airways | $866 | 16 hr 45 min |
+| 5 | Qatar Airways | $924 | 15 hr 15 min |
+| 6 | Lufthansa/South African | $942 | 14 hr 55 min |
+| 7 | Ethiopian, Aegean | $1027 | 13 hr 30 min |
 
-**Total options found:** 8
+**Total options found:** 7
 
 
 
@@ -134,4 +133,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-*Last automated update: 2026-02-13T09:36:53.604Z*
+*Last automated update: 2026-02-14T09:24:31.644Z*
